@@ -51,10 +51,10 @@ class BoardingHouseController {
             [name, address, description, phone, email, admin_wa_number],
             (err) => {
                 if (err) {
-                    console.error('Database error:', err);
+                    console.error('Detailed Database error during create:', err);
                     return res.render('boarding_house/create', {
                         title: 'Tambah Informasi Kontrakan',
-                        error: 'Gagal menyimpan data kontrakan'
+                        error: 'Gagal menyimpan data kontrakan: ' + err.message
                     });
                 }
 
@@ -100,11 +100,11 @@ class BoardingHouseController {
             [name, address, description, phone, email, admin_wa_number, id],
             (err) => {
                 if (err) {
-                    console.error('Database error:', err);
+                    console.error('Detailed Database error during update:', err);
                     return res.render('boarding_house/edit', {
                         title: 'Edit Informasi Kontrakan',
-                        boardingHouse: { id, name, address, description, phone, email },
-                        error: 'Gagal memperbarui data kontrakan'
+                        boardingHouse: { id, name, address, description, phone, email, admin_wa_number },
+                        error: 'Gagal memperbarui data kontrakan: ' + err.message
                     });
                 }
 

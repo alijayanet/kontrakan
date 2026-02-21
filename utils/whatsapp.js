@@ -11,6 +11,7 @@ class WhatsAppClient {
         this.isConnected = false;
         this.qrCode = null;
         this.status = 'initializing'; // initializing, disconnected, qr_ready, connected
+        this.contacts = {}; // Mapping LID or other JIDs to phone numbers
     }
 
     async initialize() {
@@ -62,6 +63,30 @@ class WhatsAppClient {
 
             this.sock.ev.on('creds.update', saveCreds);
 
+            this.sock.ev.on('contacts.upsert', (contacts) => {
+                for (const contact of contacts) {
+                    if (contact.id && contact.id.endsWith('@s.whatsapp.net')) {
+                        const phone = contact.id.split('@')[0];
+                        if (contact.lid) {
+                            this.contacts[contact.lid] = phone;
+                        }
+                    }
+                }
+            });
+
+            this.sock.ev.on('contacts.update', (updates) => {
+                for (const update of updates) {
+                    if (update.id && update.id.endsWith('@s.whatsapp.net')) {
+                        const phone = update.id.split('@')[0];
+                        if (update.lid) {
+                            this.contacts[update.lid] = phone;
+                        }
+                    } else if (update.id && update.id.endsWith('@lid') && update.number) {
+                        this.contacts[update.id] = update.number;
+                    }
+                }
+            });
+
             // Listen for incoming messages for Admin interaction
             this.sock.ev.on('messages.upsert', async (m) => {
                 if (m.type === 'notify') {
@@ -100,17 +125,30 @@ class WhatsAppClient {
         const remoteJid = msg.key.remoteJid;
         const text = msg.message.conversation || msg.message.extendedTextMessage?.text;
 
-        if (!text) return;
-
-        // Fetch house data for admin phone and branding
         const house = await this.getHouseData();
         if (!house || !house.admin_wa_number) return;
-
         const adminPhone = house.admin_wa_number.replace(/\D/g, '');
-        const sender = remoteJid.split('@')[0];
+
+        if (!text) return;
+
+        // Resolve sender to a standard phone number
+        let sender = remoteJid.split('@')[0];
+
+        // WhatsApp LID (Linked Identity) handling
+        if (remoteJid.endsWith('@lid')) {
+            // Check remoteJidAlt first (Baileys often puts the real number here)
+            if (msg.key.remoteJidAlt && msg.key.remoteJidAlt.endsWith('@s.whatsapp.net')) {
+                sender = msg.key.remoteJidAlt.split('@')[0];
+                this.contacts[remoteJid] = sender; // Store mapping for current session
+            } else if (this.contacts[remoteJid]) {
+                sender = this.contacts[remoteJid];
+            } else if (msg.key.participant) {
+                sender = msg.key.participant.split('@')[0];
+            }
+        }
 
         if (sender === adminPhone) {
-            // Admin commands
+            console.log(`[WA Admin] New command: "${text}" from ${sender}`);
             const lowerText = text.toLowerCase();
             if (lowerText.startsWith('bayar ')) {
                 const searchTerm = text.substring(6).trim();
@@ -160,8 +198,8 @@ class WhatsAppClient {
 
         await this.sendMessageWithBranding(remoteJid, body);
     }
+
     async processPaymentViaWA(remoteJid, searchTerm) {
-        // Search across ID, Room Number, or Tenant Name for UNPAID invoices
         const query = `
             SELECT i.*, r.room_number, t.name as tenant_name, t.phone as tenant_phone
             FROM invoices i 
@@ -194,7 +232,6 @@ class WhatsAppClient {
             const invoice = rows[0];
             const invoiceId = invoice.id;
 
-            // Mark as paid
             db.run('UPDATE invoices SET payment_status = "paid" WHERE id = ?', [invoiceId], async (err) => {
                 if (err) {
                     return this.sendMessageWithBranding(remoteJid, `❌ Gagal memproses pelunasan untuk #${invoiceId}.`);
@@ -202,7 +239,6 @@ class WhatsAppClient {
 
                 await this.sendMessageWithBranding(remoteJid, `✅ *Berhasil!* Tagihan untuk *${invoice.tenant_name}* (Kamar ${invoice.room_number}) telah ditandai LUNAS.`);
 
-                // AUTOMATIC RECEIPT to Tenant
                 if (invoice.tenant_phone) {
                     const receiptBody = `Halo, Kak *${invoice.tenant_name}*! 👋\n\n` +
                         `Terima kasih, pembayaran untuk sewa kamar *${invoice.room_number}* telah kami terima dan diverifikasi.\n\n` +
@@ -286,20 +322,28 @@ class WhatsAppClient {
     }
 
     async sendMessage(phoneNumber, message) {
+        console.log(`DEBUG: Attempting to send message to ${phoneNumber}`);
         if (!this.isConnected || !this.sock) {
-            console.log('Cannot send message, WA not connected');
+            console.log('DEBUG: Cannot send message, WA not connected');
             return;
         }
 
         try {
-            const formattedNumber = phoneNumber.replace(/\D/g, '');
-            const finalNumber = formattedNumber.startsWith('62') ? formattedNumber : '62' + formattedNumber.replace(/^0+/, '');
-            const jid = finalNumber.includes('@s.whatsapp.net') ? finalNumber : `${finalNumber}@s.whatsapp.net`;
+            let jid;
+            if (phoneNumber.endsWith('@lid') || phoneNumber.endsWith('@s.whatsapp.net')) {
+                jid = phoneNumber;
+            } else {
+                const formattedNumber = phoneNumber.replace(/\D/g, '');
+                const finalNumber = formattedNumber.startsWith('62') ? formattedNumber : '62' + formattedNumber.replace(/^0+/, '');
+                jid = `${finalNumber}@s.whatsapp.net`;
+            }
 
+            console.log(`DEBUG: Final JID for sending: ${jid}`);
             const result = await this.sock.sendMessage(jid, { text: message });
+            console.log('DEBUG: Message sent successfully');
             return result;
         } catch (error) {
-            console.error('Error sending WhatsApp message:', error);
+            console.error('DEBUG: Error sending WhatsApp message:', error);
         }
     }
 

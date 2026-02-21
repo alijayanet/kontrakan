@@ -106,6 +106,18 @@ function initializeDatabase() {
             }
         });
     });
+
+    // Add missing columns if any
+    db.all("PRAGMA table_info(boarding_houses)", (err, rows) => {
+        if (err) return;
+        const hasAdminWa = rows.some(row => row.name === 'admin_wa_number');
+        if (!hasAdminWa) {
+            db.run("ALTER TABLE boarding_houses ADD COLUMN admin_wa_number TEXT", (err) => {
+                if (err) console.error('Error adding admin_wa_number column:', err);
+                else console.log('Column admin_wa_number added successfully');
+            });
+        }
+    });
 }
 
 module.exports = db;
