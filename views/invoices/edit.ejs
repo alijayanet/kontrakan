@@ -1,0 +1,69 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Edit Tagihan</h1>
+        <a href="/invoices" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali ke Tagihan
+        </a>
+    </div>
+
+    <form action="/invoices/<%= invoice.id %>?_method=PUT" method="POST" class="card">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="lease_id" class="form-label">Kontrak (Kamar & Penyewa)</label>
+                <select name="lease_id" id="lease_id" class="form-input" required>
+                    <option value="">Pilih Kontrak</option>
+                    <% leases.forEach(lease => { %>
+                        <option value="<%= lease.id %>" <%= invoice.lease_id == lease.id ? 'selected' : '' %>>
+                            Kamar <%= lease.room_number %> - <%= lease.tenant_name %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amount" class="form-label">Jumlah Sewa</label>
+                <input type="number" name="amount" id="amount" value="<%= invoice.amount %>" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="extra_charges" class="form-label">Biaya Tambahan</label>
+                <input type="number" name="extra_charges" id="extra_charges" value="<%= invoice.extra_charges || 0 %>" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label for="due_date" class="form-label">Tanggal Jatuh Tempo</label>
+                <input type="date" name="due_date" id="due_date" value="<%= invoice.due_date %>" class="form-input" required>
+            </div>
+
+            <div class="form-group md:col-span-2">
+                <label for="payment_status" class="form-label">Status Pembayaran</label>
+                <select name="payment_status" id="payment_status" class="form-input" required>
+                    <option value="unpaid" <%= invoice.payment_status === 'unpaid' ? 'selected' : '' %>>Belum Dibayar</option>
+                    <option value="partial" <%= invoice.payment_status === 'partial' ? 'selected' : '' %>>Dibayar Sebagian</option>
+                    <option value="paid" <%= invoice.payment_status === 'paid' ? 'selected' : '' %>>Sudah Dibayar</option>
+                </select>
+            </div>
+
+            <% if (invoice.payment_date) { %>
+            <div class="form-group">
+                <label for="payment_date" class="form-label">Tanggal Pembayaran</label>
+                <input type="date" name="payment_date" id="payment_date" value="<%= invoice.payment_date %>" class="form-input">
+            </div>
+            <% } %>
+
+            <div class="form-group md:col-span-2">
+                <label for="notes" class="form-label">Catatan</label>
+                <textarea name="notes" id="notes" rows="3" class="form-input"><%= invoice.notes || '' %></textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save mr-2"></i>
+                Update Tagihan
+            </button>
+            <a href="/invoices" class="btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>

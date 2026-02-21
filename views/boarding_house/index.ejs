@@ -1,0 +1,148 @@
+<div class="space-y-8 premium-gradient-bg min-h-screen p-4 rounded-3xl text-gray-900">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Informasi Kontrakan</h1>
+            <p class="text-gray-500 mt-1">Identitas dan detail operasional properti anda.</p>
+        </div>
+        <% if (!boardingHouse) { %>
+            <a href="/boarding-house/create"
+                class="btn-primary shadow-lg shadow-primary-500/20 px-6 py-3 rounded-xl transition-all hover:scale-105">
+                <i class="fas fa-plus mr-2 text-sm"></i> Tambah Informasi
+            </a>
+            <% } %>
+    </div>
+
+    <% if (boardingHouse) { %>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Info Card -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-8 border-b border-gray-50 bg-gray-50/30">
+                        <div class="flex items-center gap-4 mb-2">
+                            <div
+                                class="w-12 h-12 rounded-2xl bg-primary-50 flex items-center justify-center text-primary-600">
+                                <i class="fas fa-building text-xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold">
+                                <%= boardingHouse.name %>
+                            </h2>
+                        </div>
+                        <p class="text-gray-500 text-sm">Informasi profil publik properti</p>
+                    </div>
+                    <div class="p-8 space-y-8">
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Deskripsi
+                                Properti</h3>
+                            <p class="text-gray-600 leading-relaxed italic">
+                                "<%= boardingHouse.description || 'Properti ini belum memiliki deskripsi detail.' %>"
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Lokasi &
+                                    Alamat</h3>
+                                <div class="flex gap-3">
+                                    <div class="mt-1 text-gray-400"><i class="fas fa-map-marker-alt"></i></div>
+                                    <p class="text-gray-700 leading-relaxed">
+                                        <%= boardingHouse.address %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Kontak
+                                        Utama</h3>
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <span class="text-gray-700 font-medium">
+                                            <%= boardingHouse.phone || '-' %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <span class="text-gray-700 font-medium">
+                                            <%= boardingHouse.email || '-' %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-8 bg-gray-50/50 border-t border-gray-100 flex gap-3">
+                        <a href="/boarding-house/<%= boardingHouse.id %>/edit"
+                            class="flex-1 bg-white border border-gray-200 hover:border-primary-500 hover:text-primary-600 text-gray-700 font-bold py-3 px-6 rounded-2xl text-center transition-all shadow-sm">
+                            <i class="fas fa-edit mr-2"></i> Edit Profil
+                        </a>
+                        <form action="/boarding-house/<%= boardingHouse.id %>?_method=DELETE" method="POST"
+                            class="inline"
+                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus data kontrakan?')">
+                            <button type="submit"
+                                class="bg-rose-50 text-rose-600 hover:bg-rose-100 font-bold py-3 px-6 rounded-2xl transition-all">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats/Settings Sidebar -->
+            <div class="space-y-6">
+                <div class="room-card p-6 bg-white relative overflow-hidden group">
+                    <div
+                        class="absolute -right-4 -top-4 w-24 h-24 bg-primary-50 rounded-full group-hover:scale-110 transition-all">
+                    </div>
+                    <h4 class="text-sm font-bold text-gray-400 uppercase mb-4 relative z-10">Statistik Cepat</h4>
+                    <div class="space-y-4 relative z-10">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500">Unit Terdaftar</span>
+                            <span class="font-bold text-gray-900">
+                                <%= typeof roomStats !=='undefined' ? roomStats.total_rooms : '-' %> Kabin
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-gray-50 pt-4">
+                            <span class="text-gray-500">Total Penghuni</span>
+                            <span class="font-bold text-gray-900">
+                                <%= typeof tenantsCount !=='undefined' ? tenantsCount : '-' %> Orang
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-gray-900 text-white rounded-3xl p-8 relative overflow-hidden shadow-xl shadow-gray-900/20">
+                    <div class="absolute top-0 right-0 p-4 opacity-20">
+                        <i class="fas fa-shield-alt text-6xl"></i>
+                    </div>
+                    <h4 class="font-bold text-xl mb-2">Keamanan Data</h4>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-6">Informasi yang anda simpan di sini akan
+                        digunakan pada cetak kuitansi dan profil publik.</p>
+                    <div class="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                        <i class="fas fa-lock"></i> Terenkripsi & Aman
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } else { %>
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-20 text-center">
+                <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-building text-gray-300 text-4xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">Identitas Kontrakan Kosong</h3>
+                <p class="text-gray-500 mb-8 max-w-sm mx-auto">Anda belum menambahkan informasi identitas untuk
+                    kontrakan anda. Identitas diperlukan untuk header laporan dan kuitansi.</p>
+                <a href="/boarding-house/create"
+                    class="btn-primary px-8 py-4 rounded-2xl shadow-lg shadow-primary-500/20 text-lg">
+                    <i class="fas fa-plus mr-3"></i> Lengkapi Informasi Sekarang
+                </a>
+            </div>
+            <% } %>
+</div>

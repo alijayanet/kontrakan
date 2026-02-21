@@ -1,0 +1,75 @@
+<aside id="sidebar" class="sidebar-container">
+    <div class="p-4">
+        <h1 class="text-xl font-bold text-primary-700 flex items-center">
+            <i class="fas fa-home mr-2"></i>
+            Kost Manager
+        </h1>
+        <p class="text-sm text-gray-500 mt-1">Sistem Manajemen Kost</p>
+    </div>
+
+    <nav class="mt-6 px-4">
+        <div class="space-y-1">
+            <a href="/"
+                class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath === '/') ? 'active' : '' %>">
+                <i class="fas fa-tachometer-alt mr-3"></i>
+                Dashboard
+            </a>
+
+            <a href="/rooms"
+                class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/rooms')) ? 'active' : '' %>">
+                <i class="fas fa-door-open mr-3"></i>
+                Kamar
+            </a>
+
+            <a href="/tenants"
+                class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/tenants')) ? 'active' : '' %>">
+                <i class="fas fa-users mr-3"></i>
+                Penyewa
+            </a>
+
+            <a href="/leases"
+                class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/leases')) ? 'active' : '' %>">
+                <i class="fas fa-file-contract mr-3"></i>
+                Sewa
+            </a>
+
+            <a href="/invoices"
+                class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/invoices')) ? 'active' : '' %>">
+                <i class="fas fa-receipt mr-3"></i>
+                Tagihan
+            </a>
+
+            <div class="pt-4 mt-4 border-t border-gray-200">
+                <a href="/boarding-house"
+                    class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/boarding-house')) ? 'active' : '' %>">
+                    <i class="fas fa-building mr-3"></i>
+                    Informasi Kontrakan
+                </a>
+
+                <a href="/settings/whatsapp"
+                    class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/settings/whatsapp')) ? 'active' : '' %>">
+                    <i class="fab fa-whatsapp mr-3"></i>
+                    WhatsApp Gateway
+                </a>
+
+                <a href="/profile"
+                    class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/profile')) ? 'active' : '' %>">
+                    <i class="fas fa-user-cog mr-3"></i>
+                    Pengaturan Akun
+                </a>
+
+                <a href="/expenses"
+                    class="sidebar-link <%= (typeof currentPath !== 'undefined' && currentPath.startsWith('/expenses')) ? 'active' : '' %>">
+                    <i class="fas fa-wallet mr-3"></i>
+                    Biaya & Pengeluaran
+                </a>
+
+
+                <a href="/logout" class="sidebar-link text-sm text-red-600 hover:text-red-800">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+</aside>

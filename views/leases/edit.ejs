@@ -1,0 +1,80 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Edit Kontrak</h1>
+        <a href="/leases" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali ke Kontrak
+        </a>
+    </div>
+
+    <form action="/leases/<%= lease.id %>?_method=PUT" method="POST" class="card">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="room_id" class="form-label">Kamar</label>
+                <select name="room_id" id="room_id" class="form-input" required>
+                    <option value="">Pilih Kamar</option>
+                    <% rooms.forEach(room => { %>
+                        <option value="<%= room.id %>" <%= lease.room_id == room.id ? 'selected' : '' %> 
+                                <%= room.status !== 'available' && lease.room_id != room.id ? 'disabled' : '' %>>
+                            Kamar <%= room.room_number %> - <%= room.type %> (Rp <%= room.price_per_month.toLocaleString('id-ID') %>)
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="tenant_id" class="form-label">Penyewa</label>
+                <select name="tenant_id" id="tenant_id" class="form-input" required>
+                    <option value="">Pilih Penyewa</option>
+                    <% tenants.forEach(tenant => { %>
+                        <option value="<%= tenant.id %>" <%= lease.tenant_id == tenant.id ? 'selected' : '' %>>
+                            <%= tenant.name %> (<%= tenant.whatsapp_number %>)
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="start_date" class="form-label">Tanggal Mulai</label>
+                <input type="date" name="start_date" id="start_date" value="<%= lease.start_date %>" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end_date" class="form-label">Tanggal Selesai</label>
+                <input type="date" name="end_date" id="end_date" value="<%= lease.end_date %>" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="monthly_rent" class="form-label">Sewa Bulanan</label>
+                <input type="number" name="monthly_rent" id="monthly_rent" value="<%= lease.monthly_rent %>" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="deposit" class="form-label">Uang Muka</label>
+                <input type="number" name="deposit" id="deposit" value="<%= lease.deposit %>" class="form-input" required>
+            </div>
+
+            <div class="form-group md:col-span-2">
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-input" required>
+                    <option value="active" <%= lease.status === 'active' ? 'selected' : '' %>>Aktif</option>
+                    <option value="expired" <%= lease.status === 'expired' ? 'selected' : '' %>>Kadaluarsa</option>
+                    <option value="terminated" <%= lease.status === 'terminated' ? 'selected' : '' %>>Dihentikan</option>
+                </select>
+            </div>
+
+            <div class="form-group md:col-span-2">
+                <label for="notes" class="form-label">Catatan</label>
+                <textarea name="notes" id="notes" rows="3" class="form-input"><%= lease.notes || '' %></textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save mr-2"></i>
+                Update Kontrak
+            </button>
+            <a href="/leases" class="btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>

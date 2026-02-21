@@ -1,0 +1,89 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Tagihan Jatuh Tempo</h1>
+        <a href="/invoices" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali ke Tagihan
+        </a>
+    </div>
+
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle text-red-500 text-xl mr-3"></i>
+            <div>
+                <h3 class="font-medium text-red-800">Tagihan Terlambat</h3>
+                <p class="text-red-700 text-sm">Berikut adalah tagihan yang sudah melewati tanggal jatuh tempo</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="table-header">Kamar</th>
+                    <th class="table-header">Penyewa</th>
+                    <th class="table-header">No WhatsApp</th>
+                    <th class="table-header">Total Tagihan</th>
+                    <th class="table-header">Jatuh Tempo</th>
+                    <th class="table-header">Hari Terlambat</th>
+                    <th class="table-header">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <% if (invoices && invoices.length > 0) { %>
+                    <% invoices.forEach(invoice => { %>
+                        <tr>
+                            <td class="table-cell-head">Kamar <%= invoice.room_number %></td>
+                            <td class="table-cell"><%= invoice.tenant_name %></td>
+                            <td class="table-cell"><%= invoice.whatsapp_number %></td>
+                            <td class="table-cell font-medium text-red-600">Rp <%= (invoice.amount + (invoice.extra_charges || 0)).toLocaleString('id-ID') %></td>
+                            <td class="table-cell"><%= invoice.due_date %></td>
+                            <td class="table-cell">
+                                <% 
+                                    const dueDate = new Date(invoice.due_date);
+                                    const today = new Date();
+                                    const diffTime = Math.abs(today - dueDate);
+                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                %>
+                                <span class="font-medium text-red-600"><%= diffDays %> hari</span>
+                            </td>
+                            <td class="table-cell">
+                                <div class="flex space-x-2">
+                                    <% const totalAmount = invoice.amount + (invoice.extra_charges || 0); %>
+                                    <button onclick="sendOverdueReminder('<%= invoice.whatsapp_number %>', '<%= invoice.tenant_name %>', '<%= invoice.room_number %>', '<%= totalAmount %>', '<%= invoice.due_date %>')" class="btn-warning text-xs">
+                                        <i class="fas fa-bell mr-1"></i> Kirim Reminder
+                                    </button>
+                                    <% if (invoice.payment_status !== 'paid') { %>
+                                        <form action="/invoices/<%= invoice.id %>/pay" method="POST" class="inline">
+                                            <button type="submit" class="btn-success text-xs" onclick="return confirm('Tandai sebagai sudah dibayar?')">
+                                                <i class="fas fa-check mr-1"></i> Lunas
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="7" class="table-cell text-center py-8">
+                            <i class="fas fa-check-circle text-green-300 text-4xl mb-4"></i>
+                            <p class="text-gray-500">Tidak ada tagihan jatuh tempo</p>
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function sendOverdueReminder(phone, name, room, amount, dueDate) {
+    if (confirm(`Kirim reminder pembayaran terlambat ke ${name} (${phone})?`)) {
+        // In a real implementation, this would call your WhatsApp API
+        const amountNum = parseFloat(amount);
+        alert(`Reminder terlambat akan dikirim ke ${phone}\n\nPesan: Halo, Kak ${name}! Pembayaran sewa kamar ${room} sudah terlambat sejak ${dueDate}. Total tagihan: Rp ${amountNum.toLocaleString('id-ID')}`);
+    }
+}
+</script>

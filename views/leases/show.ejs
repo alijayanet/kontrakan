@@ -1,0 +1,119 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Detail Kontrak</h1>
+        <div class="flex space-x-3">
+            <a href="/leases/<%= lease.id %>/edit" class="btn-primary">
+                <i class="fas fa-edit mr-2"></i>
+                Edit Kontrak
+            </a>
+            <a href="/leases" class="btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Kembali
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Kontrak</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="form-label">Kamar</label>
+                    <p class="text-gray-900 font-medium">Kamar <%= lease.room_number %> - <%= lease.room_type %></p>
+                </div>
+                <div>
+                    <label class="form-label">Penyewa</label>
+                    <p class="text-gray-900"><%= lease.tenant_name %></p>
+                </div>
+                <div>
+                    <label class="form-label">Nomor WhatsApp</label>
+                    <p class="text-gray-900"><%= lease.whatsapp_number %></p>
+                </div>
+                <div>
+                    <label class="form-label">Status</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                        <%= lease.status === 'active' ? 'bg-green-100 text-green-800' : 
+                           lease.status === 'expired' ? 'bg-yellow-100 text-yellow-800' : 
+                           'bg-red-100 text-red-800' %>">
+                        <%= lease.status === 'active' ? 'Aktif' : 
+                           lease.status === 'expired' ? 'Kadaluarsa' : 
+                           'Dihentikan' %>
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Periode Kontrak</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="form-label">Tanggal Mulai</label>
+                    <p class="text-gray-900"><%= lease.start_date %></p>
+                </div>
+                <div>
+                    <label class="form-label">Tanggal Jatuh Tempo</label>
+                    <p class="text-gray-900"><%= lease.due_date %></p>
+                </div>
+                <% if (lease.status === 'active') { %>
+                <div>
+                    <label class="form-label">Sisa Hari</label>
+                    <% 
+                        const today = new Date();
+                        const dueDate = new Date(lease.due_date);
+                        const diffTime = dueDate - today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    %>
+                    <p class="text-gray-900 <%= diffDays < 30 ? 'text-orange-600 font-medium' : '' %>">
+                        <%= diffDays > 0 ? `${diffDays} hari` : 'Kadaluarsa' %>
+                    </p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Rincian Biaya</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <label class="form-label">Harga Dasar</label>
+                    <p class="text-gray-900">Rp <%= lease.base_price.toLocaleString('id-ID') %></p>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Aksi</h3>
+            <div class="space-y-3">
+                <% if (lease.status === 'active') { %>
+                    <form action="/leases/<%= lease.id %>/checkout" method="POST" onsubmit="return confirm('Yakin ingin checkout kontrak ini?')">
+                        <button type="submit" class="btn-warning w-full">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            Checkout
+                        </button>
+                    </form>
+                <% } %>
+                <a href="/invoices?lease_id=<%= lease.id %>" class="btn-secondary block text-center">
+                    <i class="fas fa-file-invoice mr-2"></i>
+                    Lihat Tagihan
+                </a>
+                <button onclick="sendWhatsApp('<%= lease.whatsapp_number %>', '<%= lease.tenant_name %>', '<%= lease.room_number %>')" class="btn-success w-full">
+                    <i class="fab fa-whatsapp mr-2"></i>
+                    Kirim WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendWhatsApp(phone, name, room) {
+    if (confirm(`Kirim pesan WhatsApp ke ${name} (${phone})?`)) {
+        const message = `Halo, Kak ${name}!\n\nIni informasi terkait kontrak kamar ${room}. Jika ada pertanyaan, silakan hubungi kami.\n\nTerima kasih!`;
+        window.open(`https://wa.me/${phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+}
+</script>

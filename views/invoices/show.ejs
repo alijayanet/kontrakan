@@ -1,0 +1,101 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Detail Tagihan</h1>
+        <div class="flex space-x-3">
+            <a href="/invoices/<%= invoice.id %>/edit" class="btn-primary">
+                <i class="fas fa-edit mr-2"></i>
+                Edit Tagihan
+            </a>
+            <a href="/invoices" class="btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Kembali
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="card">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Tagihan</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="form-label">Kamar</label>
+                    <p class="text-gray-900 font-medium">Kamar <%= invoice.room_number %></p>
+                </div>
+                <div>
+                    <label class="form-label">Penyewa</label>
+                    <p class="text-gray-900"><%= invoice.tenant_name %></p>
+                </div>
+                <div>
+                    <label class="form-label">Nomor WhatsApp</label>
+                    <p class="text-gray-900"><%= invoice.whatsapp_number %></p>
+                </div>
+                <div>
+                    <label class="form-label">Tanggal Jatuh Tempo</label>
+                    <p class="text-gray-900"><%= invoice.due_date %></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Rincian Pembayaran</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <label class="form-label">Sewa Kamar</label>
+                    <p class="text-gray-900">Rp <%= invoice.amount.toLocaleString('id-ID') %></p>
+                </div>
+                <% if (invoice.extra_charges > 0) { %>
+                <div class="flex justify-between">
+                    <label class="form-label">Biaya Tambahan</label>
+                    <p class="text-gray-900">Rp <%= invoice.extra_charges.toLocaleString('id-ID') %></p>
+                </div>
+                <% } %>
+                <hr class="my-3">
+                <div class="flex justify-between font-medium">
+                    <label class="form-label">Total Tagihan</label>
+                    <p class="text-lg text-gray-900">Rp <%= (invoice.amount + (invoice.extra_charges || 0)).toLocaleString('id-ID') %></p>
+                </div>
+                <div>
+                    <label class="form-label">Status Pembayaran</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                        <%= invoice.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 
+                           invoice.payment_status === 'partial' ? 'bg-yellow-100 text-yellow-800' : 
+                           'bg-red-100 text-red-800' %>">
+                        <%= invoice.payment_status === 'paid' ? 'Sudah Dibayar' : 
+                           invoice.payment_status === 'partial' ? 'Dibayar Sebagian' : 
+                           'Belum Dibayar' %>
+                    </span>
+                </div>
+                <% if (invoice.payment_date) { %>
+                <div>
+                    <label class="form-label">Tanggal Pembayaran</label>
+                    <p class="text-gray-900"><%= invoice.payment_date %></p>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <% if (invoice.payment_status !== 'paid') { %>
+    <div class="card">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Aksi</h3>
+        <div class="flex space-x-3">
+            <form action="/invoices/<%= invoice.id %>/pay" method="POST">
+                <button type="submit" class="btn-success" onclick="return confirm('Tandai sebagai sudah dibayar?')">
+                    <i class="fas fa-check mr-2"></i> Tandai Lunas
+                </button>
+            </form>
+            <button onclick="sendPaymentReminder('<%= invoice.whatsapp_number %>', '<%= invoice.tenant_name %>', '<%= invoice.room_number %>', <%= invoice.amount + (invoice.extra_charges || 0) %>, '<%= invoice.due_date %>')" class="btn-warning">
+                <i class="fas fa-bell mr-2"></i> Kirim Reminder
+            </button>
+        </div>
+    </div>
+    <% } %>
+</div>
+
+<script>
+function sendPaymentReminder(phone, name, room, amount, dueDate) {
+    if (confirm(`Kirim reminder pembayaran ke ${name} (${phone})?`)) {
+        alert(`Reminder akan dikirim ke ${phone}\n\nPesan: Halo, Kak ${name}! Jangan lupa pembayaran sewa kamar ${room} sebesar Rp ${amount.toLocaleString('id-ID')} jatuh tempo pada ${dueDate}`);
+    }
+}
+</script>

@@ -1,0 +1,67 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Detail Kamar</h1>
+        <div class="flex space-x-3">
+            <a href="/rooms/<%= room.id %>/edit" class="btn-primary">
+                <i class="fas fa-edit mr-2"></i>
+                Edit Kamar
+            </a>
+            <a href="/rooms" class="btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Kembali
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Kamar</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="form-label">Nomor Kamar</label>
+                        <p class="text-gray-900 font-medium">Kamar <%= room.room_number %></p>
+                    </div>
+                    <div>
+                        <label class="form-label">Tipe Kamar</label>
+                        <p class="text-gray-900"><%= room.type %></p>
+                    </div>
+                    <div>
+                        <label class="form-label">Harga per Bulan</label>
+                        <p class="text-gray-900 font-medium">Rp <%= room.price_per_month.toLocaleString('id-ID') %></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Status & Deskripsi</h3>
+                <div class="space-y-3">
+                    <div>
+                        <label class="form-label">Status</label>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                            <%= room.status === 'available' ? 'bg-green-100 text-green-800' : 
+                               room.status === 'occupied' ? 'bg-blue-100 text-blue-800' : 
+                               'bg-yellow-100 text-yellow-800' %>">
+                            <%= room.status === 'available' ? 'Tersedia' : 
+                               room.status === 'occupied' ? 'Terisi' : 
+                               'Maintenance' %>
+                        </span>
+                    </div>
+                    <% if (room.description) { %>
+                    <div>
+                        <label class="form-label">Deskripsi</label>
+                        <p class="text-gray-900"><%= room.description %></p>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% if (room.status === 'occupied') { %>
+    <div class="card">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Informasi Penyewa</h3>
+        <p class="text-gray-500">Kamar ini sedang ditempati. Informasi penyewa dapat dilihat di menu Kontrak.</p>
+    </div>
+    <% } %>
+</div>

@@ -1,0 +1,53 @@
+<div class="space-y-6">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Tambah Kamar Baru</h1>
+        <p class="text-gray-600">Isi informasi kamar baru</p>
+    </div>
+
+    <div class="card">
+        <form action="/rooms" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label class="form-label">Nomor Kamar</label>
+                <input type="text" name="room_number" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Tipe Kamar</label>
+                <select name="type" class="form-input">
+                    <option value="Regular">Regular</option>
+                    <option value="VIP">VIP</option>
+                    <option value="Deluxe">Deluxe</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Harga per Bulan (Rp)</label>
+                <input type="number" name="price_per_month" class="form-input" min="0" step="1000" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-input">
+                    <option value="available">Tersedia</option>
+                    <option value="maintenance">Maintenance</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Deskripsi</label>
+                <textarea name="description" class="form-textarea" rows="3"></textarea>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button type="submit" class="btn-primary flex-1">
+                    <i class="fas fa-save mr-2"></i>
+                    Simpan Kamar
+                </button>
+                <a href="/rooms" class="btn-secondary flex-1 text-center">
+                    <i class="fas fa-times mr-2"></i>
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

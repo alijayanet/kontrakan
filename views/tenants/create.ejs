@@ -1,0 +1,42 @@
+<div class="space-y-6">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Tambah Penyewa Baru</h1>
+        <p class="text-gray-600">Isi informasi penyewa baru</p>
+    </div>
+
+    <div class="card">
+        <form action="/tenants" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label class="form-label">Nama Lengkap</label>
+                <input type="text" name="name" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">No WhatsApp</label>
+                <input type="text" name="whatsapp_number" class="form-input" placeholder="6281234567890" required>
+                <p class="text-xs text-gray-500 mt-1">Format: 6281234567890 (tanpa 0 di depan)</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">No KTP/NIK</label>
+                <input type="text" name="identity_number" class="form-input">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Kontak Darurat</label>
+                <input type="text" name="emergency_contact" class="form-input" placeholder="Nama - No HP">
+            </div>
+            
+            <div class="flex space-x-4">
+                <button type="submit" class="btn-primary flex-1">
+                    <i class="fas fa-save mr-2"></i>
+                    Simpan Penyewa
+                </button>
+                <a href="/tenants" class="btn-secondary flex-1 text-center">
+                    <i class="fas fa-times mr-2"></i>
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

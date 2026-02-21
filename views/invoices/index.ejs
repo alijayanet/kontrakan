@@ -1,0 +1,196 @@
+<div class="space-y-8 premium-gradient-bg min-h-screen p-4 rounded-3xl">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Manajemen Tagihan</h1>
+            <p class="text-gray-500 mt-1">Pantau pembayaran dan status tagihan penyewa.</p>
+        </div>
+        <a href="/invoices/create"
+            class="btn-primary shadow-lg shadow-primary-500/20 px-6 py-3 rounded-xl transition-all hover:scale-105">
+            <i class="fas fa-plus mr-2 text-sm"></i>
+            Buat Tagihan Baru
+        </a>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="room-card p-6 bg-white">
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Total Tagihan</p>
+            <div class="flex items-end justify-between">
+                <p class="text-2xl font-bold text-gray-900">
+                    <%= invoices ? invoices.length : 0 %>
+                </p>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                    <i class="fas fa-file-invoice text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="room-card p-6 bg-white border-l-4 border-emerald-500">
+            <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2">Terbayar</p>
+            <div class="flex items-end justify-between">
+                <p class="text-2xl font-bold text-gray-900">
+                    <%= invoices ? invoices.filter(i=> i.payment_status === 'paid').length : 0 %>
+                </p>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <i class="fas fa-check-double text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="room-card p-6 bg-white border-l-4 border-amber-500">
+            <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-2">Belum Bayar</p>
+            <div class="flex items-end justify-between">
+                <p class="text-2xl font-bold text-gray-900">
+                    <%= invoices ? invoices.filter(i=> i.payment_status === 'unpaid').length : 0 %>
+                </p>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                    <i class="fas fa-clock text-lg"></i>
+                </div>
+            </div>
+        </div>
+        <div class="room-card p-6 bg-white border-l-4 border-rose-500">
+            <p class="text-xs font-semibold text-rose-600 uppercase tracking-wider mb-2">Jatuh Tempo</p>
+            <div class="flex items-end justify-between">
+                <p class="text-2xl font-bold text-gray-900">
+                    <%= invoices ? invoices.filter(i=> i.payment_status === 'overdue').length : 0 %>
+                </p>
+                <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+                    <i class="fas fa-exclamation-triangle text-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-50/50">
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Kamar & Penyewa
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider mobile-hidden">
+                            Periode/Jatuh Tempo</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Total Tagihan
+                        </th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    <% if (invoices && invoices.length> 0) { %>
+                        <% invoices.forEach(invoice=> { %>
+                            <tr class="hover:bg-gray-50/50 transition-colors group">
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-700 font-bold group-hover:bg-primary-50 group-hover:text-primary-600 transition-all">
+                                            <%= invoice.room_number %>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-gray-900">
+                                                <%= invoice.tenant_name %>
+                                            </p>
+                                            <p class="text-xs text-gray-400">Invoice #<%= invoice.id %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5 mobile-hidden">
+                                    <p class="text-sm font-medium text-gray-700">
+                                        <%= invoice.due_date %>
+                                    </p>
+                                    <p class="text-xs text-gray-400">Batas Terakhir</p>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <p class="font-bold text-gray-900">Rp <%= (invoice.amount + (invoice.extra_charges
+                                            || 0)).toLocaleString('id-ID') %>
+                                    </p>
+                                    <% if (invoice.extra_charges> 0) { %>
+                                        <p class="text-xs text-amber-600">+ Rp <%=
+                                                invoice.extra_charges.toLocaleString('id-ID') %> (Tambahan)</p>
+                                        <% } %>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="status-badge <%= 
+                                        invoice.payment_status === 'paid' ? 'status-available' : 
+                                        invoice.payment_status === 'overdue' ? 'status-occupied' : 'status-maintenance' 
+                                    %>">
+                                        <span class="room-card-status-dot dot-<%= 
+                                            invoice.payment_status === 'paid' ? 'available' : 
+                                            invoice.payment_status === 'overdue' ? 'occupied' : 'maintenance' 
+                                        %>"></span>
+                                        <%= invoice.payment_status==='paid' ? 'Lunas' :
+                                            invoice.payment_status==='overdue' ? 'Jatuh Tempo' : 'Belum Bayar' %>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-5 text-right">
+                                    <div class="flex justify-end gap-2">
+                                        <% if (invoice.payment_status !=='paid' ) { %>
+                                            <form action="/invoices/<%= invoice.id %>/pay" method="POST" class="inline">
+                                                <button type="submit"
+                                                    class="p-2.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl transition-all"
+                                                    title="Tandai Lunas"
+                                                    onclick="return confirm('Tandai sebagai sudah dibayar?')">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            <% } %>
+                                                <button onclick="sendWA('<%= invoice.id %>')"
+                                                    class="p-2.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-xl transition-all"
+                                                    title="Kirim Pengingat WA">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </button>
+                                                <a href="/invoices/<%= invoice.id %>"
+                                                    class="p-2.5 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-primary-600 transition-all"
+                                                    title="Detail">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="/invoices/<%= invoice.id %>/edit"
+                                                    class="p-2.5 hover:bg-gray-50 rounded-xl text-gray-400 hover:text-amber-600 transition-all"
+                                                    title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-20 text-center">
+                                            <div
+                                                class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                                <i class="fas fa-receipt text-gray-300 text-3xl"></i>
+                                            </div>
+                                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Belum ada tagihan</h3>
+                                            <p class="text-gray-500 mb-8 max-w-sm mx-auto">Sistem akan otomatis mencatat
+                                                tagihan atau anda bisa membuatnya secara manual.</p>
+                                            <a href="/invoices/create"
+                                                class="btn-primary px-8 py-3 rounded-xl shadow-lg shadow-primary-500/20">
+                                                <i class="fas fa-plus mr-2"></i>
+                                                Buat Tagihan Pertama
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function sendWA(id) {
+        if (!confirm('Kirim pengingat WhatsApp ke penyewa?')) return;
+
+        try {
+            const res = await fetch(`/invoices/${id}/whatsapp`, { method: 'POST' });
+            const data = await res.json();
+            if (data.success) {
+                alert('Pesan WhatsApp berhasil dikirim!');
+            } else {
+                alert('Gagal: ' + data.message);
+            }
+        } catch (e) {
+            alert('Kesalahan sistem saat mengirim WA');
+        }
+    }
+</script>

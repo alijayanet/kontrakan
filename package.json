@@ -1,0 +1,41 @@
+{
+  "name": "kontrakan-management",
+  "version": "1.0.0",
+  "description": "Kost/Kontrakan Management System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build-css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/tailwind.css --watch"
+  },
+  "keywords": [
+    "kost",
+    "kontrakan",
+    "management",
+    "nodejs",
+    "express"
+  ],
+  "author": "Developer",
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "bcryptjs": "^3.0.3",
+    "body-parser": "^1.20.2",
+    "dotenv": "^17.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.19.0",
+    "fs": "^0.0.1-security",
+    "method-override": "^3.0.0",
+    "moment": "^2.29.4",
+    "path": "^0.12.7",
+    "pino": "^10.3.1",
+    "qrcode-terminal": "^0.12.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "tailwindcss": "^3.3.3"
+  }
+}

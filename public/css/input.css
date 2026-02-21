@@ -1,0 +1,332 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable */
+
+/* Custom components */
+@layer components {
+    .btn-primary {
+        @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center;
+    }
+
+    .btn-secondary {
+        @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center;
+    }
+
+    .btn-success {
+        @apply bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center;
+    }
+
+    .btn-warning {
+        @apply bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 inline-flex items-center;
+    }
+
+    .card {
+        @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+    }
+
+    .stat-card {
+        @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200;
+    }
+
+    .form-group {
+        @apply mb-4;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-gray-700 mb-2;
+    }
+
+    .form-input {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    }
+
+    .form-select {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    }
+
+    .form-textarea {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    }
+
+    .table-container {
+        @apply overflow-x-auto bg-white rounded-lg shadow-sm border border-gray-200;
+    }
+
+    .table {
+        @apply min-w-full divide-y divide-gray-200;
+    }
+
+    .table th {
+        @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+    }
+
+    .table td {
+        @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+    }
+
+    .table tbody tr:nth-child(even) {
+        @apply bg-gray-50;
+    }
+
+    .table tbody tr:hover {
+        @apply bg-gray-100;
+    }
+
+    .badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+
+    .badge-success {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .badge-warning {
+        @apply bg-yellow-100 text-yellow-800;
+    }
+
+    .badge-danger {
+        @apply bg-red-100 text-red-800;
+    }
+
+    .badge-info {
+        @apply bg-blue-100 text-blue-800;
+    }
+
+    .badge-secondary {
+        @apply bg-gray-100 text-gray-800;
+    }
+
+    .sidebar-link {
+        @apply flex items-center rounded-lg px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-primary-600 transition-colors duration-200;
+    }
+
+    .sidebar-link.active {
+        @apply bg-blue-50 text-primary-700 font-medium;
+    }
+
+    /* Layout utilities */
+    .layout-container {
+        @apply flex h-screen;
+    }
+
+    .sidebar-container {
+        @apply w-64 bg-white shadow-lg border-r border-gray-200 fixed left-0 top-0 h-full z-40;
+    }
+
+    .main-container {
+        @apply flex-1 flex flex-col overflow-hidden ml-64;
+    }
+
+    .content-container {
+        @apply flex-1 overflow-y-auto p-6;
+    }
+
+    /* Status badges */
+    .status-badge {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+    }
+
+    .status-available {
+        @apply bg-emerald-100 text-emerald-800 border border-emerald-200;
+    }
+
+    .status-occupied {
+        @apply bg-rose-100 text-rose-800 border border-rose-200;
+    }
+
+    .status-maintenance {
+        @apply bg-amber-100 text-amber-800 border border-amber-200;
+    }
+
+    .status-booking {
+        @apply bg-blue-100 text-blue-800 border border-blue-200;
+    }
+
+    /* Room Card Premium Styling */
+    .room-card {
+        @apply bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative;
+    }
+
+    .room-card::after {
+        content: '';
+        @apply absolute inset-0 rounded-2xl border-2 border-transparent transition-colors duration-300;
+        pointer-events: none;
+    }
+
+    .room-card:hover::after {
+        @apply border-primary-500/10;
+    }
+
+    .room-card-status-dot {
+        @apply w-2 h-2 rounded-full mr-2;
+    }
+
+    .dot-available {
+        @apply bg-emerald-500;
+    }
+
+    .dot-occupied {
+        @apply bg-rose-500;
+    }
+
+    .dot-maintenance {
+        @apply bg-amber-500;
+    }
+
+    .dot-booking {
+        @apply bg-blue-500;
+    }
+
+    /* Decorative elements */
+    .premium-gradient-bg {
+        @apply bg-gradient-to-br from-primary-50 to-white;
+    }
+
+    .card-footer-actions {
+        @apply bg-gray-50 px-6 py-4 border-t border-gray-100 flex gap-2;
+    }
+
+    /* Desktop styles */
+    @media (min-width: 1024px) {
+        .layout-container {
+            @apply flex;
+        }
+
+        .sidebar-container {
+            @apply w-64 fixed left-0 top-0 h-full z-10 transform translate-x-0;
+        }
+
+        .main-container {
+            @apply flex-1 flex flex-col overflow-hidden ml-64;
+        }
+
+        .mobile-sidebar-overlay {
+            @apply hidden;
+        }
+    }
+
+    /* Responsive utilities */
+    @media (max-width: 768px) {
+        .layout-container {
+            @apply flex-col;
+        }
+
+        .sidebar-container {
+            @apply w-64 fixed left-0 top-0 h-full z-50 transform -translate-x-full transition-transform duration-300 ease-in-out;
+        }
+
+        .sidebar-container.mobile-open {
+            @apply transform translate-x-0;
+        }
+
+        .main-container {
+            @apply ml-0 w-full;
+        }
+
+        .content-container {
+            @apply p-4;
+        }
+
+        .mobile-sidebar-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 z-40 hidden;
+        }
+
+        .mobile-sidebar-overlay.active {
+            @apply block;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .table-container {
+            @apply rounded-none border-x-0 overflow-x-auto;
+        }
+
+        .card {
+            @apply rounded-none border-x-0;
+        }
+
+        .content-container {
+            @apply p-2;
+        }
+
+        .btn {
+            @apply text-sm px-3 py-2;
+        }
+
+        .form-input {
+            @apply text-sm;
+        }
+
+        .table {
+            @apply text-sm;
+        }
+
+        .table th,
+        .table td {
+            @apply px-3 py-2;
+        }
+
+        /* Mobile table improvements */
+        .table-cell-actions {
+            @apply flex flex-col space-y-1;
+        }
+
+        .table-cell-actions .btn {
+            @apply w-full justify-center;
+        }
+
+        /* Hide less important columns on mobile */
+        .mobile-hidden {
+            @apply hidden;
+        }
+    }
+
+    @media (max-width: 390px) {
+        .content-container {
+            @apply p-1;
+        }
+
+        .card {
+            @apply p-3;
+        }
+
+        .btn {
+            @apply text-xs px-2 py-1;
+        }
+
+        .table th,
+        .table td {
+            @apply px-2 py-1 text-xs;
+        }
+
+        h1 {
+            @apply text-xl;
+        }
+
+        h2 {
+            @apply text-lg;
+        }
+
+        .text-2xl {
+            @apply text-xl;
+        }
+
+        .text-3xl {
+            @apply text-2xl;
+        }
+
+        .form-label {
+            @apply text-sm;
+        }
+
+        .status-badge {
+            @apply text-xs px-1.5 py-0.5;
+        }
+    }
+}

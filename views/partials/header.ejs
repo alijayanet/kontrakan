@@ -1,0 +1,28 @@
+<header class="bg-white shadow-sm border-b border-gray-200">
+    <div class="flex items-center justify-between px-6 py-4">
+        <div class="flex items-center">
+            <button id="mobile-menu-toggle" class="lg:hidden mr-4 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-lg p-2">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h2 class="text-xl font-semibold text-gray-800"><%= title %></h2>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <button class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                    <span class="text-white text-sm font-medium">A</span>
+                </div>
+                <span class="text-sm text-gray-700">
+                    <%= typeof user !== 'undefined' && user ? user.name : 'Admin' %>
+                </span>
+            </div>
+        </div>
+    </div>
+</header>

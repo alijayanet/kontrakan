@@ -1,0 +1,64 @@
+<div class="space-y-6">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">Edit Kamar</h1>
+        <a href="/rooms" class="btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali ke Kamar
+        </a>
+    </div>
+
+    <form action="/rooms/<%= room.id %>?_method=PUT" method="POST" class="card">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="form-group">
+                <label for="room_number" class="form-label">Nomor Kamar</label>
+                <input type="text" name="room_number" id="room_number" value="<%= room.room_number %>" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="type" class="form-label">Tipe Kamar</label>
+                <select name="type" id="type" class="form-input" required>
+                    <option value="Standard" <%= room.type === 'Standard' ? 'selected' : '' %>>Standard</option>
+                    <option value="Deluxe" <%= room.type === 'Deluxe' ? 'selected' : '' %>>Deluxe</option>
+                    <option value="Suite" <%= room.type === 'Suite' ? 'selected' : '' %>>Suite</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="price_per_month" class="form-label">Harga per Bulan</label>
+                <input type="number" name="price_per_month" id="price_per_month" value="<%= room.price_per_month %>" class="form-input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="capacity" class="form-label">Kapasitas</label>
+                <input type="number" name="capacity" id="capacity" value="<%= room.capacity %>" class="form-input" required>
+            </div>
+
+            <div class="form-group md:col-span-2">
+                <label for="description" class="form-label">Deskripsi</label>
+                <textarea name="description" id="description" rows="3" class="form-input"><%= room.description || '' %></textarea>
+            </div>
+
+            <div class="form-group md:col-span-2">
+                <label for="facilities" class="form-label">Fasilitas</label>
+                <textarea name="facilities" id="facilities" rows="2" class="form-input"><%= room.facilities || '' %></textarea>
+            </div>
+
+            <div class="form-group md:col-span-2">
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-input" required>
+                    <option value="available" <%= room.status === 'available' ? 'selected' : '' %>>Tersedia</option>
+                    <option value="occupied" <%= room.status === 'occupied' ? 'selected' : '' %>>Ditempati</option>
+                    <option value="maintenance" <%= room.status === 'maintenance' ? 'selected' : '' %>>Perbaikan</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-6">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save mr-2"></i>
+                Update Kamar
+            </button>
+            <a href="/rooms" class="btn-secondary">Batal</a>
+        </div>
+    </form>
+</div>

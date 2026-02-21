@@ -1,0 +1,59 @@
+<div class="space-y-6">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Buat Tagihan Baru</h1>
+        <p class="text-gray-600">Buat tagihan sewa untuk penyewa</p>
+    </div>
+
+    <div class="card">
+        <form action="/invoices" method="POST" class="space-y-6">
+            <div class="form-group">
+                <label class="form-label">Pilih Sewa</label>
+                <select name="lease_id" class="form-input" required>
+                    <option value="">-- Pilih Sewa --</option>
+                    <% if (leases && leases.length > 0) { %>
+                        <% leases.forEach(lease => { %>
+                            <option value="<%= lease.id %>">Kamar <%= lease.room_number %> - <%= lease.tenant_name %></option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="form-group">
+                    <label class="form-label">Jumlah Tagihan (Rp)</label>
+                    <input type="number" name="amount" class="form-input" min="0" step="1000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Biaya Tambahan (Rp)</label>
+                    <input type="number" name="extra_charges" class="form-input" min="0" step="1000" value="0">
+                    <p class="text-xs text-gray-500 mt-1">Listrik, air, denda, dll.</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Tanggal Jatuh Tempo</label>
+                <input type="date" name="due_date" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Status Pembayaran</label>
+                <select name="payment_status" class="form-input">
+                    <option value="unpaid">Belum Bayar</option>
+                    <option value="paid">Lunas</option>
+                </select>
+            </div>
+            
+            <div class="flex space-x-4">
+                <button type="submit" class="btn-primary flex-1">
+                    <i class="fas fa-save mr-2"></i>
+                    Buat Tagihan
+                </button>
+                <a href="/invoices" class="btn-secondary flex-1 text-center">
+                    <i class="fas fa-times mr-2"></i>
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
