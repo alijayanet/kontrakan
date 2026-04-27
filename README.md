@@ -63,7 +63,7 @@ npm install
 ### 3. Konfigurasi Environment
 Salin file `.env.example` menjadi `.env` dan sesuaikan nilainya:
 ```bash
-cp .env.example .env
+cp env.example.txt .env
 ```
 Isi konfigurasi dasar:
 - `PORT=3001`
