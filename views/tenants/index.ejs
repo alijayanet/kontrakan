@@ -28,7 +28,7 @@
             <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider mb-2">Penyewa Aktif</p>
             <div class="flex items-end justify-between">
                 <p class="text-3xl font-bold text-gray-900">
-                    <%= tenants ? tenants.filter(t=> t.status !== 'inactive').length : 0 %>
+                    <%= tenants ? tenants.length : 0 %>
                 </p>
                 <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
                     <i class="fas fa-user-check text-lg"></i>
@@ -57,7 +57,6 @@
                             WhatsApp</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider mobile-hidden">
                             Kontak Darurat</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-right">Aksi
                         </th>
                     </tr>
@@ -82,7 +81,7 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-5 mobile-hidden">
-                                    <a href="https://wa.me/<%= tenant.whatsapp_number %>" target="_blank"
+                                    <a href="https://wa.me/<%= (tenant.whatsapp_number || '').replace(/\\D/g, '') %>" target="_blank"
                                         class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium whitespace-nowrap">
                                         <i class="fab fa-whatsapp"></i>
                                         <%= tenant.whatsapp_number %>
@@ -90,14 +89,6 @@
                                 </td>
                                 <td class="px-6 py-5 mobile-hidden text-sm text-gray-600">
                                     <%= tenant.emergency_contact || '-' %>
-                                </td>
-                                <td class="px-6 py-5">
-                                    <span
-                                        class="status-badge <%= tenant.status === 'inactive' ? 'status-maintenance' : 'status-available' %>">
-                                        <span
-                                            class="room-card-status-dot dot-<%= tenant.status === 'inactive' ? 'maintenance' : 'available' %>"></span>
-                                        <%= tenant.status==='inactive' ? 'Nonaktif' : 'Aktif' %>
-                                    </span>
                                 </td>
                                 <td class="px-6 py-5 text-right">
                                     <div class="flex justify-end gap-2">
@@ -126,7 +117,7 @@
                             <% }); %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="5" class="px-6 py-20 text-center">
+                                        <td colspan="4" class="px-6 py-20 text-center">
                                             <div
                                                 class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                                                 <i class="fas fa-users text-gray-300 text-3xl"></i>

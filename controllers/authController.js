@@ -98,7 +98,7 @@ class AuthController {
                     return res.redirect('/profile?error=Password saat ini salah');
                 }
 
-                let updateSql = 'UPDATE admin_users SET username = ?, name = ?, created_at = CURRENT_TIMESTAMP';
+                let updateSql = 'UPDATE admin_users SET username = ?, name = ?';
                 let params = [username, name];
 
                 if (new_password && new_password.trim() !== '') {
@@ -165,8 +165,6 @@ class AuthController {
                                 console.error('Error creating default admin:', err);
                             } else {
                                 console.log('Default admin user created successfully');
-                                console.log(`Username: ${defaultUsername}`);
-                                console.log(`Password: ${defaultPassword}`);
                             }
                         }
                     );

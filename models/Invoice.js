@@ -4,7 +4,16 @@ const moment = require('moment');
 class Invoice {
     static getAll(callback) {
         const sql = `
-            SELECT i.*, l.room_id, r.room_number, t.name as tenant_name
+            SELECT 
+                i.*, 
+                l.room_id, 
+                r.room_number, 
+                t.name as tenant_name,
+                t.whatsapp_number,
+                CASE 
+                    WHEN i.payment_status = 'unpaid' AND i.due_date < date('now') THEN 'overdue'
+                    ELSE i.payment_status
+                END as payment_status_display
             FROM invoices i
             JOIN leases l ON i.lease_id = l.id
             JOIN rooms r ON l.room_id = r.id
@@ -16,7 +25,16 @@ class Invoice {
 
     static getById(id, callback) {
         const sql = `
-            SELECT i.*, l.room_id, r.room_number, t.name as tenant_name, t.whatsapp_number
+            SELECT 
+                i.*, 
+                l.room_id, 
+                r.room_number, 
+                t.name as tenant_name, 
+                t.whatsapp_number,
+                CASE 
+                    WHEN i.payment_status = 'unpaid' AND i.due_date < date('now') THEN 'overdue'
+                    ELSE i.payment_status
+                END as payment_status_display
             FROM invoices i
             JOIN leases l ON i.lease_id = l.id
             JOIN rooms r ON l.room_id = r.id
@@ -59,7 +77,16 @@ class Invoice {
 
     static getUnpaidInvoices(callback) {
         const sql = `
-            SELECT i.*, l.room_id, r.room_number, t.name as tenant_name, t.whatsapp_number
+            SELECT 
+                i.*, 
+                l.room_id, 
+                r.room_number, 
+                t.name as tenant_name, 
+                t.whatsapp_number,
+                CASE 
+                    WHEN i.payment_status = 'unpaid' AND i.due_date < date('now') THEN 'overdue'
+                    ELSE i.payment_status
+                END as payment_status_display
             FROM invoices i
             JOIN leases l ON i.lease_id = l.id
             JOIN rooms r ON l.room_id = r.id
@@ -67,16 +94,18 @@ class Invoice {
             WHERE i.payment_status = 'unpaid'
             ORDER BY i.due_date
         `;
-        console.log('Debug - SQL Query for unpaid invoices:', sql);
-        db.all(sql, [], (err, rows) => {
-            console.log('Debug - Query result:', err, rows);
-            callback(err, rows);
-        });
+        db.all(sql, [], callback);
     }
 
     static getOverdueInvoices(callback) {
         const sql = `
-            SELECT i.*, l.room_id, r.room_number, t.name as tenant_name, t.whatsapp_number
+            SELECT 
+                i.*, 
+                l.room_id, 
+                r.room_number, 
+                t.name as tenant_name, 
+                t.whatsapp_number,
+                'overdue' as payment_status_display
             FROM invoices i
             JOIN leases l ON i.lease_id = l.id
             JOIN rooms r ON l.room_id = r.id
@@ -106,6 +135,28 @@ class Invoice {
         db.run(sql, [id], function(err) {
             callback(err, this.changes);
         });
+    }
+
+    static getInvoicesDueOn(dateISO, callback) {
+        const sql = `
+            SELECT 
+                i.*, 
+                r.room_number, 
+                t.name as tenant_name, 
+                t.whatsapp_number,
+                CASE 
+                    WHEN i.payment_status = 'unpaid' AND i.due_date < date('now') THEN 'overdue'
+                    ELSE i.payment_status
+                END as payment_status_display
+            FROM invoices i
+            JOIN leases l ON i.lease_id = l.id
+            JOIN rooms r ON l.room_id = r.id
+            JOIN tenants t ON l.tenant_id = t.id
+            WHERE i.payment_status = 'unpaid'
+              AND i.due_date = ?
+            ORDER BY r.room_number
+        `;
+        db.all(sql, [dateISO], callback);
     }
 
     static getStatistics(callback) {

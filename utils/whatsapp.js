@@ -1,4 +1,4 @@
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, delay } = require('@whiskeysockets/baileys');
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const fs = require('fs');
 const path = require('path');
@@ -12,6 +12,7 @@ class WhatsAppClient {
         this.qrCode = null;
         this.status = 'initializing'; // initializing, disconnected, qr_ready, connected
         this.contacts = {}; // Mapping LID or other JIDs to phone numbers
+        this.latestVersion = null;
     }
 
     async initialize() {
@@ -24,8 +25,15 @@ class WhatsAppClient {
             const { state, saveCreds } = await useMultiFileAuthState(authFolder);
             this.authState = state;
 
+            const { version, isLatest, error: versionError } = await fetchLatestBaileysVersion();
+            this.latestVersion = version;
+            if (!isLatest && versionError) {
+                console.warn('WARN: Using fallback Baileys version (failed to fetch latest):', versionError?.message || versionError);
+            }
+
             this.sock = makeWASocket({
                 auth: state,
+                version,
                 printQRInTerminal: false,
                 browser: ['Kost Management', 'Chrome', '1.0.0'],
                 syncFullHistory: false,
@@ -43,12 +51,23 @@ class WhatsAppClient {
 
                 if (connection === 'close') {
                     this.isConnected = false;
-                    const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
-                    console.log('Connection closed due to', lastDisconnect.error, 'Reconnecting:', shouldReconnect);
+                    const disconnectError = lastDisconnect?.error;
+                    const statusCode = disconnectError?.output?.statusCode;
+                    const reason = disconnectError?.data?.reason;
+                    const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
 
-                    if (lastDisconnect.error?.output?.statusCode === DisconnectReason.loggedOut) {
+                    console.log('Connection closed due to', disconnectError, 'Reconnecting:', shouldReconnect);
+
+                    if (statusCode === 405 || reason === '405') {
                         this.status = 'disconnected';
-                        this.clearSession();
+                        await this.clearSession();
+                        setTimeout(() => this.initialize(), 5000);
+                        return;
+                    }
+
+                    if (statusCode === DisconnectReason.loggedOut) {
+                        this.status = 'disconnected';
+                        await this.clearSession();
                     } else if (shouldReconnect) {
                         this.status = 'reconnecting';
                         setTimeout(() => this.initialize(), 3000);

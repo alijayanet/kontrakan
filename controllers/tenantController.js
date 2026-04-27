@@ -1,6 +1,20 @@
 const Tenant = require('../models/Tenant');
 
 class TenantController {
+    static normalizeWhatsAppNumber(input) {
+        const raw = (input || '').toString().trim();
+        let digits = raw.replace(/\D/g, '');
+        if (!digits) return '';
+
+        if (digits.startsWith('0')) {
+            digits = '62' + digits.slice(1);
+        } else if (digits.startsWith('8')) {
+            digits = '62' + digits;
+        }
+
+        return digits;
+    }
+
     static index(req, res) {
         Tenant.getAll((err, tenants) => {
             if (err) {
@@ -26,11 +40,18 @@ class TenantController {
 
     static create(req, res) {
         const tenantData = {
-            name: req.body.name,
-            whatsapp_number: req.body.whatsapp_number,
+            name: (req.body.name || '').toString().trim(),
+            whatsapp_number: TenantController.normalizeWhatsAppNumber(req.body.whatsapp_number),
             identity_number: req.body.identity_number,
             emergency_contact: req.body.emergency_contact
         };
+
+        if (!tenantData.name || !tenantData.whatsapp_number) {
+            return res.status(400).render('error', {
+                title: 'Error',
+                message: 'Nama dan No WhatsApp wajib diisi'
+            });
+        }
 
         Tenant.create(tenantData, (err, tenant) => {
             if (err) {
@@ -64,11 +85,18 @@ class TenantController {
     static update(req, res) {
         const tenantId = req.params.id;
         const tenantData = {
-            name: req.body.name,
-            whatsapp_number: req.body.whatsapp_number,
+            name: (req.body.name || '').toString().trim(),
+            whatsapp_number: TenantController.normalizeWhatsAppNumber(req.body.whatsapp_number),
             identity_number: req.body.identity_number,
             emergency_contact: req.body.emergency_contact
         };
+
+        if (!tenantData.name || !tenantData.whatsapp_number) {
+            return res.status(400).render('error', {
+                title: 'Error',
+                message: 'Nama dan No WhatsApp wajib diisi'
+            });
+        }
 
         Tenant.update(tenantId, tenantData, (err, tenant) => {
             if (err) {

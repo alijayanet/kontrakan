@@ -118,6 +118,17 @@ function initializeDatabase() {
             });
         }
     });
+
+    db.all("PRAGMA table_info(leases)", (err, rows) => {
+        if (err) return;
+        const hasRentalType = rows.some(row => row.name === 'rental_type');
+        if (!hasRentalType) {
+            db.run("ALTER TABLE leases ADD COLUMN rental_type TEXT DEFAULT 'monthly'", (err) => {
+                if (err) console.error('Error adding rental_type column:', err);
+                else console.log('Column rental_type added successfully');
+            });
+        }
+    });
 }
 
 module.exports = db;

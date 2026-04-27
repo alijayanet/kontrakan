@@ -237,7 +237,7 @@ class InvoiceController {
 
             try {
                 const totalAmount = invoice.amount + (invoice.extra_charges || 0);
-                const messageType = invoice.payment_status === 'overdue' ? 'overdue' : 'reminder';
+                const messageType = invoice.payment_status_display === 'overdue' ? 'overdue' : 'reminder';
 
                 await whatsappClient.sendReminder(
                     invoice.whatsapp_number,
@@ -249,7 +249,7 @@ class InvoiceController {
                 );
 
                 // Increment notification count
-                Invoice.incrementNotifCount(invoiceId, () => { });
+                Invoice.incrementNotificationCount(invoiceId, () => { });
 
                 res.json({ success: true, message: 'WhatsApp message sent successfully' });
             } catch (error) {

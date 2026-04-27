@@ -24,14 +24,33 @@ class Room {
     }
 
     static update(id, data, callback) {
-        const sql = 'UPDATE rooms SET room_number = ?, type = ?, price_per_month = ?, status = ?, description = ? WHERE id = ?';
-        const params = [data.room_number, data.type, data.price_per_month, data.status, data.description, id];
-        db.run(sql, params, function(err) {
+        Room.getById(id, (err, existing) => {
             if (err) {
                 callback(err, null);
-            } else {
-                callback(null, { id, ...data });
+                return;
             }
+            if (!existing) {
+                callback(new Error('Room not found'), null);
+                return;
+            }
+
+            const merged = {
+                room_number: data.room_number !== undefined ? data.room_number : existing.room_number,
+                type: data.type !== undefined ? data.type : existing.type,
+                price_per_month: data.price_per_month !== undefined ? data.price_per_month : existing.price_per_month,
+                status: data.status !== undefined ? data.status : existing.status,
+                description: data.description !== undefined ? data.description : existing.description
+            };
+
+            const sql = 'UPDATE rooms SET room_number = ?, type = ?, price_per_month = ?, status = ?, description = ? WHERE id = ?';
+            const params = [merged.room_number, merged.type, merged.price_per_month, merged.status, merged.description, id];
+            db.run(sql, params, function (updateErr) {
+                if (updateErr) {
+                    callback(updateErr, null);
+                } else {
+                    callback(null, { id, ...merged });
+                }
+            });
         });
     }
 
